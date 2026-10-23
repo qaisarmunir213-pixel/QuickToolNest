@@ -1,7 +1,80 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QuickToolNest — Admin</title><style>
-:root{--navy:#101e35;--blue:#1479f8;--bg:#f4f7fc;--ink:#172640;--muted:#71809a;--line:#e1e9f5;--card:#fff}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px/1.45 Inter,system-ui,Segoe UI,Arial;color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:10px 14px;font-weight:650;background:var(--blue);color:#fff}button.secondary{background:#edf3ff;color:#1559bb}button.danger{background:#fff0f1;color:#c6283d}button.ghost{background:transparent;color:#52627c}.hidden{display:none!important}.login-wrap{max-width:430px;margin:8vh auto;padding:20px}.login-card,.panel,.metric,.section-card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 20px #17365d08}.login-card{padding:28px}.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800}.logo{display:grid;place-items:center;background:linear-gradient(135deg,#1687ff,#35d4ce);color:white;width:40px;height:40px;border-radius:12px}.muted{color:var(--muted)}label{display:block;font-weight:650;margin:13px 0 6px}input,select,textarea{width:100%;border:1px solid #d6dfed;border-radius:9px;padding:11px 12px;background:#fff;color:var(--ink);outline-color:#8dbbff}textarea{min-height:100px;resize:vertical}.app{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:235px;background:linear-gradient(180deg,#10213b,#0d192d);color:#eaf2ff;padding:20px 13px;overflow:auto}.sidebar .brand{padding:0 8px 26px;font-size:18px}.brand small{display:block;font-size:11px;font-weight:500;color:#a8bbd7}.nav-label{font-size:10px;letter-spacing:1.2px;color:#8296b4;padding:15px 12px 7px}.nav{width:100%;text-align:left;background:transparent;color:#c7d4e7;margin:2px 0;padding:11px 12px;border-radius:9px;font-weight:550}.nav.active,.nav:hover{background:#1878ed;color:white}.sidebar-foot{position:sticky;top:calc(100vh - 70px);padding:15px 10px;color:#a8bbd7;font-size:12px}.main{margin-left:235px}.topbar{height:67px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 27px;gap:14px}.search{max-width:450px}.top-actions{display:flex;align-items:center;gap:12px}.content{padding:25px;max-width:1600px;margin:auto}.page-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}.page-head h1{font-size:27px;margin:0}.page-head p{margin:4px 0 0;color:var(--muted)}.grid{display:grid;gap:16px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.metric{padding:19px;min-height:125px}.metric-top{display:flex;justify-content:space-between;align-items:center;color:#65738a}.metric-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:#e9f2ff;color:#0877f9;font-size:19px}.metric strong{display:block;font-size:27px;margin:7px 0 2px}.two-col{grid-template-columns:minmax(0,1.35fr) minmax(280px,1fr);margin-top:17px}.three-col{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:17px}.panel{padding:19px;min-width:0}.panel h2,.section-card h2{font-size:16px;margin:0 0 14px}.quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.quick{display:flex;gap:10px;align-items:center;text-align:left;padding:13px;background:#f6f9ff;border:1px solid var(--line);color:var(--ink);font-weight:650}.quick span{display:block;color:var(--muted);font-weight:400;font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:510px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #edf1f7;font-size:13px}th{color:#71809a;background:#f8faff;font-size:11px;text-transform:uppercase;letter-spacing:.3px}.pill{display:inline-block;border-radius:20px;padding:4px 9px;background:#e7fbf2;color:#087b54;font-size:11px;font-weight:700}.pill.off{background:#fff0ed;color:#b64032}.chart{height:155px;display:flex;align-items:end;gap:10px;padding:20px 6px 0;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent 37px,#edf2f9 38px)}.bar{flex:1;min-width:8px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#1582ff,#8ec8ff);height:30%}.chart-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:8px}.section-card{padding:22px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.field.full{grid-column:1/-1}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.notice{padding:11px 13px;border-radius:9px;background:#eef5ff;color:#34557f;margin-top:12px;white-space:pre-wrap}.list-tools{display:flex;gap:9px;align-items:center;margin:14px 0}.list-tools input{max-width:300px}.item-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.item-row:last-child{border-bottom:0}.item-row strong{display:block}.item-row small{color:var(--muted)}.item-actions{display:flex;gap:6px}.item-actions button{padding:7px 9px;font-size:12px}.mobile-menu{display:none}.status{font-size:13px;color:var(--muted);margin-top:10px}@media(max-width:1050px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.three-col{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}@media(max-width:700px){.sidebar{width:75px;padding:15px 8px}.sidebar .brand-text,.sidebar .nav-label,.sidebar .nav-text,.sidebar-foot{display:none}.sidebar .brand{padding:0 8px 20px}.sidebar .nav{font-size:19px;text-align:center;padding:12px 5px}.main{margin-left:75px}.topbar{padding:0 13px}.topbar .search{max-width:48%}.content{padding:15px}.page-head{align-items:flex-start;flex-direction:column}.metrics{gap:10px}.metric{padding:13px;min-height:110px}.metric strong{font-size:22px}.two-col{gap:12px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.quick-grid{grid-template-columns:1fr}.top-actions .view-site{display:none}}
-</style></head><body>
-<div id="loginView" class="login-wrap"><div class="login-card"><div class="brand"><div class="logo">✦</div><div>QuickToolNest<small>Admin Control Center</small></div></div><h1 style="font-size:24px;margin:27px 0 4px">Welcome back</h1><p class="muted">Sign in to manage your website.</p><label for="apiUrl">Cloudflare Worker API URL</label><input id="apiUrl" placeholder="https://your-worker.workers.dev"><label for="adminPassword">Admin password</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter admin password"><button id="loginBtn" style="width:100%;margin-top:20px">Sign in to dashboard</button><div id="loginMsg" class="notice hidden"></div><p class="muted" style="font-size:12px;margin-top:18px">Your password is sent to your configured Worker API. Never put secrets in website files.</p></div></div>
-<div id="appView" class="app hidden"><aside class="sidebar"><div class="brand"><div class="logo">✦</div><div class="brand-text">QuickToolNest<small>Admin Panel</small></div></div><div class="nav-label">MAIN MENU</div><button class="nav active" data-page="dashboard">⌂ <span class="nav-text"> Dashboard</span></button><button class="nav" data-page="tools">⚒ <span class="nav-text"> Tools Management</span></button><button class="nav" data-page="categories">▦ <span class="nav-text"> Categories</span></button><button class="nav" data-page="pages">▤ <span class="nav-text"> Pages Management</span></button><div class="nav-label">GROWTH & SETTINGS</div><button class="nav" data-page="ads">◈ <span class="nav-text"> Ads & Monetization</span></button><button class="nav" data-page="analytics">▥ <span class="nav-text"> Analytics & Reports</span></button><button class="nav" data-page="settings">⚙ <span class="nav-text"> Website Settings</span></button><button class="nav" data-page="account">♙ <span class="nav-text"> Admin Account</span></button><div class="sidebar-foot">QuickToolNest.online<br>Cloudflare Pages</div></aside><main class="main"><header class="topbar"><input id="globalSearch" class="search" placeholder="Search tools, pages, settings…"><div class="top-actions"><button class="secondary view-site" id="viewSite">View Website ↗</button><span>●</span><strong>Administrator</strong><button class="ghost" id="logoutBtn">Logout</button></div></header><div id="content" class="content"></div></main></div>
-<script type="module" src="/src/main.js"></script></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuickToolNest — Admin Control Center</title>
+<style>
+:root{--navy:#10213b;--blue:#1479f8;--bg:#f4f7fc;--ink:#172640;--muted:#71809a;--line:#e1e9f5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font:14px/1.5 system-ui,Arial;color:var(--ink)}
+button,input{font:inherit}
+button{cursor:pointer;border:0;border-radius:9px;padding:11px 15px;font-weight:650;background:var(--blue);color:#fff}
+input{width:100%;padding:12px;border:1px solid #d6dfed;border-radius:9px}
+label{display:block;font-weight:650;margin:14px 0 6px}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+.login-wrap{max-width:430px;margin:8vh auto;padding:20px}
+.login-card,.panel,.metric{background:white;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 4px 20px #17365d08}
+.brand{font-size:21px;font-weight:800;margin-bottom:24px}
+.logo{display:inline-grid;place-items:center;background:linear-gradient(135deg,#1687ff,#35d4ce);color:white;width:40px;height:40px;border-radius:12px;margin-right:8px}
+.app{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:230px;background:var(--navy);color:white;padding:20px 13px}
+.nav{display:block;width:100%;text-align:left;background:transparent;color:#d8e5fa;margin:4px 0}
+.nav:hover,.nav.active{background:#1878ed}
+.main{margin-left:230px}
+.topbar{background:white;border-bottom:1px solid var(--line);padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.content{padding:25px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.metric strong{display:block;font-size:28px;margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:18px}
+.panel h2{font-size:17px;margin-top:0}
+.item{padding:12px 0;border-bottom:1px solid var(--line)}
+.notice{padding:12px;background:#eef5ff;border-radius:9px;margin-top:12px;white-space:pre-wrap}
+@media(max-width:800px){.sidebar{position:static;width:100%;display:flex;flex-wrap:wrap;padding:10px}.brand{width:100%;margin:5px}.nav{width:auto;display:inline-block}.main{margin:0}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.content{padding:14px}.topbar{padding:12px;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login-wrap">
+  <div class="login-card">
+    <div class="brand"><span class="logo">✦</span>QuickToolNest<br><small class="muted">Admin Control Center</small></div>
+    <h2>Welcome back</h2>
+    <p class="muted">Sign in to manage your website.</p>
+    <label for="apiUrl">Cloudflare Worker API URL</label>
+    <input id="apiUrl" placeholder="https://your-worker.workers.dev">
+    <label for="adminPassword">Admin password</label>
+    <input id="adminPassword" type="password" autocomplete="current-password">
+    <button id="loginBtn" style="width:100%;margin-top:18px">Sign in to dashboard</button>
+    <div id="loginMsg" class="notice hidden"></div>
+  </div>
+</div>
+
+<div id="appView" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand">✦ QuickToolNest</div>
+    <button class="nav active" data-page="dashboard">⌂ Dashboard</button>
+    <button class="nav" data-page="tools">⚒ Tools Management</button>
+    <button class="nav" data-page="categories">▦ Categories</button>
+    <button class="nav" data-page="pages">▤ Pages Management</button>
+    <button class="nav" data-page="ads">◈ Ads & Monetization</button>
+    <button class="nav" data-page="analytics">▥ Analytics & Reports</button>
+    <button class="nav" data-page="settings">⚙ Website Settings</button>
+    <button class="nav" data-page="account">♙ Admin Account</button>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <strong id="pageTitle">Dashboard</strong>
+      <div>
+        <button id="viewSite">View Website ↗</button>
+        <button id="logoutBtn" style="background:#e9eef8;color:#243650">Logout</button>
+      </div>
+    </header>
+    <section id="content" class="content"></section>
+  </main>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
