@@ -1,4 +1,3 @@
-
 const $ = id => document.getElementById(id);
 const state = { api:'', token:'', page:'dashboard', tools:[], pages:[], ads:{enabled:false,clientId:'',slots:[]}, settings:{siteName:'QuickToolNest',contactEmail:'',categories:[]}, editId:null };
 const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
