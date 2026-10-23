@@ -1,0 +1,12 @@
+name = "quicktoolnest-admin"
+main = "worker.js"
+compatibility_date = "2026-10-20"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "quicktoolnest-db"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+
+# Configure secrets separately:
+# npx wrangler secret put ADMIN_PASSWORD
+# npx wrangler secret put JWT_SECRET
