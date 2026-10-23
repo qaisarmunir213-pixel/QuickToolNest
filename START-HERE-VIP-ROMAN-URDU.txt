@@ -1,0 +1,27 @@
+QUICKTOOLNEST VIP UPGRADE — START HERE
+=====================================
+
+IS PACKAGE MEIN
+- Professional responsive homepage with search, category filters and dark mode
+- 35+ browser-based tools across Text, Images, Calculators, Converters, Developer and PDF categories
+- Individual tool modal/interface and browser-side processing for many tools
+- PDF Merge, Split/Extract, Compress (image-based; text selectability may be lost), Images-to-PDF, PDF-to-Images and PDF-to-Text
+- About, Contact, Privacy Policy, Terms, Disclaimer pages
+- admin.html, worker.js, schema.sql and deployment guide for a starter Worker + D1 admin backend
+
+CLOUDFLARE PAGES PAR WEBSITE UPDATE KARNE KA TAREEQA
+1. Is ZIP ko phone/computer par download karke EXTRACT karein.
+2. Extracted folder mein index.html, admin.html, worker.js, schema.sql aur baqi HTML files dekhein.
+3. Cloudflare Dashboard > Workers & Pages > apni QuickToolNest Pages project kholein.
+4. Agar Direct Upload project hai, Create deployment / Upload assets ka option use karein. ZIP ko agar accept na kare to extracted files upload karein; files ko extra nested folder ke andar na rakhein.
+5. Deployment complete hone ke baad https://quicktoolnest.online khol kar check karein.
+
+IMPORTANT: ADMIN BACKEND
+Sirf website files upload karne se admin login active nahi hota. worker.js ko Cloudflare Worker par deploy, D1 database create aur schema.sql run, DB binding set, aur ADMIN_PASSWORD + JWT_SECRET ko Worker Secrets mein add karna hota hai. Detailed instructions README-ROMAN-URDU.txt mein hain.
+
+Admin backend starter hai: public homepage abhi D1 se tools/pages/ads settings automatically load nahi karta. Ads settings save hona actual AdSense integration ke barabar nahi. Production use se pehle Worker security/CORS and login rate limiting review karni chahiye.
+
+PDF NOTES
+- PDF libraries CDN se load hoti hain; internet required.
+- PDF Compress pages ko images mein convert karta hai; searchable/selectable text, links aur accessibility lose ho sakti hai. File size kam hona guaranteed nahi.
+- PDF-to-Text scanned PDFs par OCR nahi karta.
