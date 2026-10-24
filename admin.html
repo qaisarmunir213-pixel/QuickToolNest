@@ -1,1 +1,88 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QuickToolNest Admin</title><link rel="stylesheet" href="admin.css"></head><body><aside><div class="brand">✦ QuickTool<span>Nest</span><small>Admin Panel</small></div><nav><button class="active" data-page="dashboard">⌂　Dashboard</button><button data-page="tools">⚒　Tools Management</button><button data-page="pages">▤　Pages Management</button><button data-page="ads">◈　Ads & Monetization</button><button data-page="analytics">▥　Analytics & Reports</button><button data-page="settings">⚙　Website Settings</button><button data-page="users">♟　Users Management</button><button data-page="billing">▣　Billing <em>OFF</em></button></nav><div class="foot">✦ QuickToolNest<br><small>Your All-in-One Tools Hub</small></div></aside><main><header><button id="menu">☰</button><input id="search" placeholder="Search tools, pages, settings..."><a href="https://quicktoolnest.online/" target="_blank">View Website ↗</a><div class="user">🔵　Admin <small>Administrator</small></div></header><div id="content"></div><footer>© 2026 QuickToolNest · Admin Panel <span>Billing disabled</span></footer></main><div id="toast"></div><script src="admin.js"></script></body></html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>QuickToolNest Admin</title>
+<style>
+:root{--bg:#f4f7fc;--card:#fff;--tx:#0f1b3d;--mu:#6b7a99;--pr:#2563eb;--bd:#e3e9f4;--sd:#0b1b3f}
+*{box-sizing:border-box;margin:0;font-family:Inter,system-ui,sans-serif}
+body{background:var(--bg);color:var(--tx);display:flex;min-height:100vh;font-size:14px}
+aside{width:240px;background:var(--sd);color:#cfd8f0;padding:16px 10px;position:fixed;top:0;bottom:0;overflow:auto;transition:.2s;z-index:5}
+aside h1{color:#fff;font-size:18px;padding:6px 10px 16px}aside h1 small{display:block;font-size:12px;color:#8fa0c8;font-weight:400}
+aside a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:8px;cursor:pointer;color:#cfd8f0;margin-bottom:2px}
+aside a:hover{background:#16295a}aside a.on{background:var(--pr);color:#fff}aside a.off{opacity:.45;cursor:not-allowed}
+main{margin-left:240px;flex:1;padding:20px 26px;min-width:0}
+.top{display:flex;gap:12px;align-items:center;margin-bottom:18px}.top input{flex:1;max-width:420px}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:#fff;font-size:14px;color:var(--tx)}
+textarea{min-height:140px;font-family:monospace}label{font-size:12px;color:var(--mu);display:block;margin:10px 0 4px}
+h2{font-size:28px}.sub{color:var(--mu);margin:2px 0 18px}
+.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.g2{grid-template-columns:2fr 1fr}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px}
+.stat{display:flex;gap:14px;align-items:center}.ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:22px}
+.stat b{font-size:28px;display:block}
+.btn{background:var(--pr);color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn.sec{background:#eef3ff;color:var(--pr)}.btn.red{background:#fee2e2;color:#dc2626}.btn.sm{padding:5px 10px;font-size:12px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--bd)}th{color:var(--mu);font-size:12px;background:#f8faff}
+.tag{padding:3px 10px;border-radius:99px;font-size:12px;background:#dcfce7;color:#16a34a}.tag.x{background:#fee2e2;color:#dc2626}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qa div{padding:14px;border-radius:10px;border:1px solid var(--bd);cursor:pointer;background:#f6f9ff}.qa div:hover{border-color:var(--pr)}
+#modal{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:20;padding:16px}#modal .card{width:100%;max-width:560px;max-height:90vh;overflow:auto}
+#login{position:fixed;inset:0;background:var(--sd);display:grid;place-items:center;z-index:50}#login .card{width:320px}
+.burger{display:none;font-size:22px;cursor:pointer}
+@media(max-width:900px){aside{transform:translateX(-100%)}aside.open{transform:none}main{margin-left:0;padding:14px}.burger{display:block}.g2{grid-template-columns:1fr}.tw{overflow-x:auto}}
+</style></head><body>
+<div id="login"><div class="card"><h2 style="font-size:20px">QuickToolNest Admin</h2><label>Password</label><input id="pw" type="password" onkeydown="event.key=='Enter'&&login()"><br><br><button class="btn" style="width:100%" onclick="login()">Login</button><p class="sub" style="margin-top:10px;font-size:12px">Default password: admin123 (Settings mein badal lein)</p></div></div>
+<aside id="side"><h1>🪺 QuickToolNest<small>Admin Panel</small></h1><div id="nav"></div></aside>
+<main><div class="top"><span class="burger" onclick="side.classList.toggle('open')">☰</span><input placeholder="Search tools, pages..." oninput="q=this.value;render()"><span style="flex:1"></span><button class="btn sec" onclick="window.open('/','_blank')">View Website ↗</button><button class="btn" onclick="publish()">⬆ Publish to GitHub</button></div><div id="v"></div></main>
+<div id="modal"><div class="card" id="mc"></div></div>
+<script>
+const $=s=>document.querySelector(s);let q='',view='dash',D;
+const DEF={tools:[{id:1,name:'Plagiarism Checker',cat:'Text Tools',url:'/tools/plagiarism-checker.html',desc:'',status:'Active'},{id:2,name:'AI Humanizer',cat:'AI Tools',url:'/tools/ai-humanizer.html',desc:'',status:'Active'},{id:3,name:'PDF Merge',cat:'PDF Tools',url:'/tools/pdf-merge.html',desc:'',status:'Active'}],
+cats:[{id:1,name:'Text Tools'},{id:2,name:'PDF Tools'},{id:3,name:'Image Tools'},{id:4,name:'SEO Tools'},{id:5,name:'AI Tools'}],
+pages:[{id:1,title:'Home',url:'/',content:'',status:'Published',footer:'No'},{id:2,title:'About Us',url:'/about.html',content:'<h1>About Us</h1><p>...</p>',status:'Published',footer:'Yes'},{id:3,title:'Contact',url:'/contact.html',content:'',status:'Published',footer:'Yes'},{id:4,title:'Privacy Policy',url:'/privacy.html',content:'',status:'Published',footer:'Yes'},{id:5,title:'Terms & Conditions',url:'/terms.html',content:'',status:'Published',footer:'Yes'}],
+visits:[700,1200,950,1500,1300,2600,3600],activity:[],
+set:{name:'QuickToolNest',url:'https://quicktoolnest.online',title:'',desc:'',keywords:'',facebook:'',twitter:'',instagram:'',email:'',whatsapp:'',ga:'',adClient:'',adOn:'No',adHead:'',adSlot1:'',adSlot2:'',billing:'Off',pass:'admin123'},
+gh:{}};
+const ENT={tools:{t:'Tools',f:[['name','Name'],['cat','Category','cat'],['url','Tool page URL'],['desc','Description','area'],['status','Status','Active,Inactive']],c:['name','cat','status']},
+cats:{t:'Categories',f:[['name','Name']],c:['name']},
+pages:{t:'Pages',f:[['title','Title'],['url','URL (e.g. /about.html)'],['content','Page content (HTML)','area'],['footer','Show in footer links?','Yes,No'],['status','Status','Published,Draft']],c:['title','url','footer','status']}};
+function load(){try{D=JSON.parse(localStorage.qtn)}catch(e){}
+ if(!D)fetch('site-data.json').then(r=>r.json()).then(j=>{D=j;save(1);render()}).catch(()=>{D=structuredClone(DEF);save(1);render()});}
+function save(s){if(D)localStorage.qtn=JSON.stringify(D)}
+function log(m){D.activity.unshift({m,t:new Date().toLocaleString()});D.activity=D.activity.slice(0,20)}
+function login(){if($('#pw').value==(D?.set.pass||'admin123')){sessionStorage.in=1;$('#login').remove()}else alert('Wrong password')}
+if(sessionStorage.in)$('#login').remove();
+const NAV=[['dash','🏠','Dashboard'],['tools','🛠','Tools Management'],['cats','▦','Categories'],['pages','📄','Pages (About, Privacy, Terms...)'],['ads','💰','Ads & Monetization'],['an','📊','Analytics & Reports'],['set','⚙','Website Settings'],['users','👥','Users Management'],['bill','💳','Billing (OFF)']];
+function render(){if(!D)return;$('#nav').innerHTML=NAV.map(n=>`<a class="${view==n[0]?'on':''} ${n[0]=='bill'&&D.set.billing=='Off'?'off':''}" onclick="go('${n[0]}')">${n[1]} ${n[2]}</a>`).join('')+`<a onclick="sessionStorage.clear();location.reload()">↩ Logout</a>`;
+ const f=({dash,ads,an,set,users,bill}[view]);$('#v').innerHTML=ENT[view]?listV(view):f();}
+function go(v){if(v=='bill'&&D.set.billing=='Off')return alert('Billing abhi OFF hai. Website Settings mein ON kar sakte hain.');view=v;side.classList.remove('open');render()}
+function listV(k){const e=ENT[k],rows=D[k].filter(r=>JSON.stringify(r).toLowerCase().includes(q.toLowerCase()));
+ return `<h2>${e.t}</h2><p class="sub">Add, edit ya delete karein — phir "Publish to GitHub" dabayein.</p><div class="card"><div class="bar"><b>${rows.length} items</b><button class="btn" onclick="form('${k}')">+ Add New</button></div><div class="tw"><table><tr><th>#</th>${e.c.map(c=>`<th>${c}</th>`).join('')}<th>Action</th></tr>${rows.map((r,i)=>`<tr><td>${i+1}</td>${e.c.map(c=>`<td>${c=='status'?`<span class="tag ${/Inactive|Draft/.test(r[c])?'x':''}">${r[c]}</span>`:esc(r[c])}</td>`).join('')}<td><button class="btn sec sm" onclick="form('${k}',${r.id})">✎ Edit</button> <button class="btn red sm" onclick="del('${k}',${r.id})">🗑</button></td></tr>`).join('')}</table></div></div>`}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function field(n,l,t,v){let h=`<label>${l}</label>`;if(t=='area')return h+`<textarea name="${n}">${esc(v)}</textarea>`;
+ if(t=='cat')return h+`<select name="${n}">${D.cats.map(c=>`<option ${c.name==v?'selected':''}>${esc(c.name)}</option>`).join('')}</select>`;
+ if(t)return h+`<select name="${n}">${t.split(',').map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
+ return h+`<input name="${n}" value="${esc(v)}">`}
+function form(k,id){const e=ENT[k],r=D[k].find(x=>x.id==id)||{};$('#mc').innerHTML=`<h3>${id?'Edit':'Add New'} ${e.t}</h3><form id="fm">${e.f.map(f=>field(f[0],f[1],f[2],r[f[0]])).join('')}</form><br><button class="btn" onclick="sv('${k}',${id||0})">Save</button> <button class="btn sec" onclick="modal.style.display='none'">Cancel</button>`;modal.style.display='grid'}
+function sv(k,id){const o=Object.fromEntries(new FormData($('#fm')));if(id){Object.assign(D[k].find(x=>x.id==id),o)}else{o.id=Date.now();D[k].push(o)}log(`${id?'Updated':'Added'} ${ENT[k].t}: ${o.name||o.title}`);save();modal.style.display='none';render()}
+function del(k,id){if(confirm('Delete karna hai?')){D[k]=D[k].filter(x=>x.id!=id);log('Deleted from '+ENT[k].t);save();render()}}
+function dash(){const v=D.visits,t=v.reduce((a,b)=>a+b,0),m=Math.max(...v),pts=v.map((x,i)=>`${30+i*90},${170-x/m*140}`).join(' ');
+ const S=[['Total Tools',D.tools.length,'#2563eb','🛠','tools'],['Total Categories',D.cats.length,'#16a34a','▦','cats'],['Total Pages',D.pages.length,'#7c3aed','📄','pages'],['Total Visitors',t,'#e11d48','👥','an']];
+ return `<h2>Dashboard</h2><p class="sub">Welcome back! Here's what's happening with your website.</p><div class="grid g4">${S.map(s=>`<div class="card stat" style="cursor:pointer" onclick="go('${s[4]}')"><div class="ic" style="background:${s[2]}">${s[3]}</div><div>${s[0]}<b>${s[1]}</b></div></div>`).join('')}</div><br>
+<div class="grid g2"><div class="card"><b>Website Traffic</b> <small style="color:var(--mu)">last 7 days</small><svg viewBox="0 0 600 190" style="width:100%"><polyline fill="#2563eb22" stroke="#2563eb" stroke-width="3" points="30,170 ${pts} ${30+6*90},170"/>${v.map((x,i)=>`<circle cx="${30+i*90}" cy="${170-x/m*140}" r="4" fill="#2563eb"/>`).join('')}</svg></div>
+<div class="card"><b>Quick Actions</b><br><br><div class="qa"><div onclick="go('tools');form('tools')">🛠 Add New Tool</div><div onclick="go('cats');form('cats')">▦ Add New Category</div><div onclick="go('pages');form('pages')">📄 Add New Page</div><div onclick="go('ads')">💰 AdSense Settings</div><div onclick="go('an')">📊 Analytics</div><div onclick="go('set')">⚙ Website Settings</div></div></div></div><br>
+<div class="grid g2"><div class="card"><b>Categories Overview</b><br><br>${D.cats.map(c=>`<span class="tag" style="background:#eef3ff;color:#2563eb;margin:3px;display:inline-block">${esc(c.name)} · ${D.tools.filter(t=>t.cat==c.name).length} tools</span>`).join('')}</div>
+<div class="card"><b>Recent Activity</b><br><br>${D.activity.slice(0,6).map(a=>`<p style="margin-bottom:8px">${esc(a.m)} <small style="color:var(--mu)">· ${a.t}</small></p>`).join('')||'<small>Abhi koi activity nahi</small>'}</div></div>`}
+function fields(pre,arr){return arr.map(a=>field(a[0],a[1],a[2],D.set[a[0]])).join('')}
+function saveSet(){Object.assign(D.set,Object.fromEntries(new FormData($('#sf'))));log('Settings updated');save();alert('Saved ✔');render()}
+function setCard(t,arr){return `<h2>${t}</h2><br><div class="card"><form id="sf">${fields('',arr)}</form><br><button class="btn" onclick="saveSet()">Save</button></div>`}
+function ads(){return setCard('Ads & Monetization',[['adOn','AdSense enabled?','Yes,No'],['adClient','Publisher ID (ca-pub-XXXXXXXX)'],['adHead','AdSense head code (optional)','area'],['adSlot1','Ad unit slot 1 (header)'],['adSlot2','Ad unit slot 2 (sidebar/footer)']])}
+function set(){return setCard('Website Settings',[['name','Site name'],['url','Site URL'],['title','SEO meta title'],['desc','Meta description','area'],['keywords','Keywords'],['email','Contact email'],['whatsapp','WhatsApp'],['facebook','Facebook URL'],['twitter','Twitter/X URL'],['instagram','Instagram URL'],['ga','Google Analytics ID (G-XXXX)'],['billing','Billing module','Off,On'],['pass','Admin password']])+`<br><div class="card"><b>GitHub Publishing</b><p class="sub">Repo mein <code>site-data.json</code> commit hoga, Cloudflare auto deploy karega.</p>${['owner','repo','branch','token'].map(k=>`<label>${k}${k=='token'?' (GitHub Personal Access Token, contents: write)':''}</label><input id="gh_${k}" type="${k=='token'?'password':'text'}" value="${esc(D.gh[k]||(k=='branch'?'main':''))}">`).join('')}<br><button class="btn" onclick="['owner','repo','branch','token'].forEach(k=>D.gh[k]=$('#gh_'+k).value);save();alert('Saved ✔')">Save GitHub</button> <button class="btn sec" onclick="exportJ()">Export JSON</button></div>`}
+function an(){return `<h2>Analytics & Visitors</h2><p class="sub">Real visitor numbers ke liye Google Analytics ID Settings mein dalein ya Cloudflare Web Analytics dekhein. Neeche graph ke numbers manually edit ho sakte hain.</p><div class="card"><form id="af">${D.visits.map((x,i)=>`<label>Day ${i+1}</label><input name="v${i}" type="number" value="${x}">`).join('')}</form><br><button class="btn" onclick="D.visits=[...new FormData($('#af')).values()].map(Number);save();render()">Update</button> <a class="btn sec" style="text-decoration:none;display:inline-block" target="_blank" href="https://analytics.google.com">Open Google Analytics</a></div>`}
+function users(){return `<h2>Users Management</h2><p class="sub">Abhi single admin hai. Password Website Settings mein badlein. Strong security ke liye Cloudflare Access (Zero Trust) se /admin.html ko protect karein.</p>`}
+function bill(){return `<h2>Billing</h2><p class="sub">Module ON hai, lekin abhi placeholder.</p>`}
+function exportJ(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));a.download='site-data.json';a.click()}
+async function publish(){const g=D.gh;if(!g.owner||!g.repo||!g.token)return alert('Pehle Website Settings mein GitHub owner, repo aur token dalein.');
+ const u=`https://api.github.com/repos/${g.owner}/${g.repo}/contents/site-data.json`,h={Authorization:'Bearer '+g.token,Accept:'application/vnd.github+json'};
+ try{let sha;const r=await fetch(u+'?ref='+(g.branch||'main'),{headers:h});if(r.ok)sha=(await r.json()).sha;
+ const {gh,...pub}=D;const b=btoa(unescape(encodeURIComponent(JSON.stringify(pub,null,2))));
+ const p=await fetch(u,{method:'PUT',headers:h,body:JSON.stringify({message:'Update via admin panel',content:b,sha,branch:g.branch||'main'})});
+ alert(p.ok?'Published ✔ Cloudflare 1-2 minute mein live karega.':'Error: '+(await p.text()))}catch(e){alert(e)}}
+load();render();
+</script></body></html>
