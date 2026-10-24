@@ -14,8 +14,7 @@ textarea{min-height:140px;font-family:monospace}label{font-size:12px;color:var(-
 h2{font-size:28px}.sub{color:var(--mu);margin:2px 0 18px}
 .grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.g2{grid-template-columns:2fr 1fr}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px}
-.stat{display:flex;gap:14px;align-items:center}.ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:22px}
-.stat b{font-size:28px;display:block}
+.stat{display:flex;gap:14px;align-items:center}.ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:22px}.stat b{font-size:28px;display:block}
 .btn{background:var(--pr);color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:600}
 .btn.sec{background:#eef3ff;color:var(--pr)}.btn.red{background:#fee2e2;color:#dc2626}.btn.sm{padding:5px 10px;font-size:12px}
 table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--bd)}th{color:var(--mu);font-size:12px;background:#f8faff}
@@ -23,61 +22,64 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 10p
 .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .qa{display:grid;grid-template-columns:1fr 1fr;gap:10px}.qa div{padding:14px;border-radius:10px;border:1px solid var(--bd);cursor:pointer;background:#f6f9ff}.qa div:hover{border-color:var(--pr)}
 #modal{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:20;padding:16px}#modal .card{width:100%;max-width:560px;max-height:90vh;overflow:auto}
-#login{position:fixed;inset:0;background:var(--sd);display:grid;place-items:center;z-index:50}#login .card{width:320px}
+#login{position:fixed;inset:0;background:var(--sd);display:grid;place-items:center;z-index:50}#login .card{width:340px}
+#toast{position:fixed;bottom:20px;right:20px;background:#16a34a;color:#fff;padding:10px 18px;border-radius:8px;display:none;z-index:99}
 .burger{display:none;font-size:22px;cursor:pointer}
 @media(max-width:900px){aside{transform:translateX(-100%)}aside.open{transform:none}main{margin-left:0;padding:14px}.burger{display:block}.g2{grid-template-columns:1fr}.tw{overflow-x:auto}}
 </style></head><body>
-<div id="login"><div class="card"><h2 style="font-size:20px">QuickToolNest Admin</h2><label>Password</label><input id="pw" type="password" onkeydown="event.key=='Enter'&&login()"><br><br><button class="btn" style="width:100%" onclick="login()">Login</button></div></div>
+<div id="login"><div class="card"><h2 style="font-size:20px">QuickToolNest Admin</h2>
+<label>Worker API link</label><input id="api" placeholder="https://xxxx.workers.dev"><label>Password</label><input id="pw" type="password" onkeydown="event.key=='Enter'&&login()"><br><br><button class="btn" style="width:100%" onclick="login()">Login</button></div></div>
 <aside id="side"><h1>🪺 QuickToolNest<small>Admin Panel</small></h1><div id="nav"></div></aside>
-<main><div class="top"><span class="burger" onclick="side.classList.toggle('open')">☰</span><input placeholder="Search tools, pages..." oninput="q=this.value;render()"><span style="flex:1"></span><button class="btn sec" onclick="window.open('/','_blank')">View Website ↗</button><button class="btn" onclick="publish()">⬆ Publish to GitHub</button></div><div id="v"></div></main>
-<div id="modal"><div class="card" id="mc"></div></div>
+<main><div class="top"><span class="burger" onclick="side.classList.toggle('open')">☰</span><input placeholder="Search..." oninput="q=this.value;render()"><span style="flex:1"></span><button class="btn sec" onclick="window.open('/','_blank')">View Website ↗</button></div><div id="v"></div></main>
+<div id="modal"><div class="card" id="mc"></div></div><div id="toast"></div>
 <script>
-const $=s=>document.querySelector(s);let q='',view='dash',D;
-const DEF={tools:[],cats:[],pages:[],activity:[],set:{name:'QuickToolNest',url:'',title:'',desc:'',keywords:'',facebook:'',twitter:'',instagram:'',email:'',whatsapp:'',ga:'',adClient:'',adOn:'No',adHead:'',adSlot1:'',adSlot2:'',billing:'Off',pass:'admin123'},gh:{}};
+const $=s=>document.querySelector(s);let q='',view='dash',API=localStorage.qtnApi||'',D={tools:[],pages:[],ads:{enabled:false,clientId:'',slots:[]},settings:{},cats:[]};
+$('#api').value=API;
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1800)}
+async function api(m,p,b){const r=await fetch(API+p,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+sessionStorage.tok},body:b?JSON.stringify(b):undefined});
+ if(r.status==401){sessionStorage.clear();alert('Session khatam, dobara login karein');location.reload();throw new Error('401')}
+ const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||r.status);return j}
+async function login(){let a=$('#api').value.trim().replace(/\/+$/,'');if(a&&!/^https?:/.test(a))a='https://'+a;
+ try{const r=await fetch(a+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#pw').value})});const j=await r.json();
+ if(!r.ok)return alert(j.error||'Login fail');API=a;localStorage.qtnApi=a;sessionStorage.tok=j.token;start()}catch(e){alert('Worker link se connect nahi hua. Link check karein.')}}
+async function start(){$('#login')?.remove();try{for(const s of['tools','pages','ads','settings'])D[s]=(await api('GET','/api/admin/data?section='+s)).data;D.cats=D.settings.cats||[]}catch(e){alert('Data load nahi hua: '+e.message)}render()}
+async function persist(sec){try{if(sec=='settings')D.settings.cats=D.cats;await api('PUT','/api/admin/data',{section:sec,data:D[sec]});toast('Saved ✔')}catch(e){alert('Save nahi hua: '+e.message)}}
+const SEC={tools:'tools',pages:'pages',cats:'settings'};
 const ENT={tools:{t:'Tools',f:[['name','Name'],['cat','Category','cat'],['url','Tool page URL'],['desc','Description','area'],['status','Status','Active,Inactive']],c:['name','cat','status']},
 cats:{t:'Categories',f:[['name','Name']],c:['name']},
 pages:{t:'Pages',f:[['title','Title'],['url','URL (e.g. /about.html)'],['content','Page content (HTML)','area'],['footer','Show in footer links?','Yes,No'],['status','Status','Published,Draft']],c:['title','url','footer','status']}};
-function load(){try{D=JSON.parse(localStorage.qtn2)}catch(e){}
- if(!D)fetch('site-data.json').then(r=>r.json()).then(j=>{D=j;save(1);render()}).catch(()=>{D=structuredClone(DEF);save(1);render()});}
-function save(s){if(D)localStorage.qtn2=JSON.stringify(D)}
-function log(m){D.activity.unshift({m,t:new Date().toLocaleString()});D.activity=D.activity.slice(0,20)}
-async function login(){try{const r=await fetch('/api/login',{method:'POST',body:JSON.stringify({password:$('#pw').value})});const j=await r.json();if(j.ok){sessionStorage.tok=j.token;$('#login').remove()}else alert('Wrong password')}catch(e){alert('Login server se connect nahi hua')}}
-if(sessionStorage.tok)$('#login').remove();
-const NAV=[['dash','🏠','Dashboard'],['tools','🛠','Tools Management'],['cats','▦','Categories'],['pages','📄','Pages (About, Privacy, Terms...)'],['ads','💰','Ads & Monetization'],['an','📊','Analytics & Reports'],['set','⚙','Website Settings'],['users','👥','Users Management'],['bill','💳','Billing (OFF)']];
-function render(){if(!D)return;$('#nav').innerHTML=NAV.map(n=>`<a class="${view==n[0]?'on':''} ${n[0]=='bill'&&D.set.billing=='Off'?'off':''}" onclick="go('${n[0]}')">${n[1]} ${n[2]}</a>`).join('')+`<a onclick="sessionStorage.clear();location.reload()">↩ Logout</a>`;
- const f=({dash,ads,an,set,users,bill}[view]);$('#v').innerHTML=ENT[view]?listV(view):f();}
-function go(v){if(v=='bill'&&D.set.billing=='Off')return alert('Billing abhi OFF hai. Website Settings mein ON kar sakte hain.');view=v;side.classList.remove('open');render()}
-function listV(k){const e=ENT[k],rows=D[k].filter(r=>JSON.stringify(r).toLowerCase().includes(q.toLowerCase()));
- return `<h2>${e.t}</h2><p class="sub">Add, edit ya delete karein — phir "Publish to GitHub" dabayein.</p><div class="card"><div class="bar"><b>${rows.length} items</b>${k!='cats'?'<button class="btn sec" onclick="imp()">⬇ Import from website</button> ':''}<button class="btn" onclick="form('${k}')">+ Add New</button></div><div class="tw"><table><tr><th>#</th>${e.c.map(c=>`<th>${c}</th>`).join('')}<th>Action</th></tr>${rows.map((r,i)=>`<tr><td>${i+1}</td>${e.c.map(c=>`<td>${c=='status'?`<span class="tag ${/Inactive|Draft/.test(r[c])?'x':''}">${r[c]}</span>`:esc(r[c])}</td>`).join('')}<td><button class="btn sec sm" onclick="form('${k}',${r.id})">✎ Edit</button> <button class="btn red sm" onclick="del('${k}',${r.id})">🗑</button></td></tr>`).join('')}</table></div></div>`}
+const NAV=[['dash','🏠','Dashboard'],['tools','🛠','Tools Management'],['cats','▦','Categories'],['pages','📄','Pages (About, Privacy, Terms...)'],['ads','💰','Ads & Monetization'],['an','📊','Analytics'],['set','⚙','Website Settings'],['users','👥','Users Management'],['bill','💳','Billing (OFF)']];
+const billOn=()=>D.settings.billing=='On';
+function render(){if(!sessionStorage.tok)return;$('#nav').innerHTML=NAV.map(n=>`<a class="${view==n[0]?'on':''} ${n[0]=='bill'&&!billOn()?'off':''}" onclick="go('${n[0]}')">${n[1]} ${n[2]}</a>`).join('')+`<a onclick="sessionStorage.clear();location.reload()">↩ Logout</a>`;
+ $('#v').innerHTML=ENT[view]?listV(view):({dash,ads,an,set,users,bill}[view])()}
+function go(v){if(v=='bill'&&!billOn())return alert('Billing abhi OFF hai. Website Settings mein ON kar sakte hain.');view=v;side.classList.remove('open');render()}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function listV(k){const e=ENT[k],rows=D[k].filter(r=>JSON.stringify(r).toLowerCase().includes(q.toLowerCase()));
+ return `<h2>${e.t}</h2><p class="sub">Add, edit ya delete karein. Har change seedha server par save hota hai.</p><div class="card"><div class="bar"><b>${rows.length} items</b><span>${k!='cats'?'<button class="btn sec" onclick="imp()">⬇ Import from website</button> ':''}<button class="btn" onclick="form(\''+k+'\')">+ Add New</button></span></div><div class="tw"><table><tr><th>#</th>${e.c.map(c=>`<th>${c}</th>`).join('')}<th>Action</th></tr>${rows.map((r,i)=>`<tr><td>${i+1}</td>${e.c.map(c=>`<td>${c=='status'?`<span class="tag ${/Inactive|Draft/.test(r[c])?'x':''}">${r[c]}</span>`:esc(r[c])}</td>`).join('')}<td><button class="btn sec sm" onclick="form('${k}',${r.id})">✎ Edit</button> <button class="btn red sm" onclick="del('${k}',${r.id})">🗑</button></td></tr>`).join('')}</table></div></div>`}
 function field(n,l,t,v){let h=`<label>${l}</label>`;if(t=='area')return h+`<textarea name="${n}">${esc(v)}</textarea>`;
- if(t=='cat')return h+`<select name="${n}">${D.cats.map(c=>`<option ${c.name==v?'selected':''}>${esc(c.name)}</option>`).join('')}</select>`;
+ if(t=='cat')return h+`<select name="${n}"><option value=""></option>${D.cats.map(c=>`<option ${c.name==v?'selected':''}>${esc(c.name)}</option>`).join('')}</select>`;
  if(t)return h+`<select name="${n}">${t.split(',').map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
  return h+`<input name="${n}" value="${esc(v)}">`}
 function form(k,id){const e=ENT[k],r=D[k].find(x=>x.id==id)||{};$('#mc').innerHTML=`<h3>${id?'Edit':'Add New'} ${e.t}</h3><form id="fm">${e.f.map(f=>field(f[0],f[1],f[2],r[f[0]])).join('')}</form><br><button class="btn" onclick="sv('${k}',${id||0})">Save</button> <button class="btn sec" onclick="modal.style.display='none'">Cancel</button>`;modal.style.display='grid'}
-function sv(k,id){const o=Object.fromEntries(new FormData($('#fm')));if(id){const r=D[k].find(x=>x.id==id);if(k=='cats')D.tools.forEach(t=>{if(t.cat==r.name)t.cat=o.name});Object.assign(r,o)}else{o.id=Date.now();D[k].push(o)}log(`${id?'Updated':'Added'} ${ENT[k].t}: ${o.name||o.title}`);save();modal.style.display='none';render()}
-function del(k,id){if(confirm('Delete karna hai?')){D[k]=D[k].filter(x=>x.id!=id);log('Deleted from '+ENT[k].t);save();render()}}
+async function sv(k,id){const o=Object.fromEntries(new FormData($('#fm')));let tl=0;
+ if(id){const r=D[k].find(x=>x.id==id);if(k=='cats')D.tools.forEach(t=>{if(t.cat==r.name){t.cat=o.name;tl=1}});Object.assign(r,o)}else{o.id=Date.now();D[k].push(o)}
+ modal.style.display='none';render();if(tl)await persist('tools');await persist(SEC[k])}
+async function del(k,id){if(confirm('Delete karna hai?')){D[k]=D[k].filter(x=>x.id!=id);render();await persist(SEC[k])}}
 function dash(){const S=[['Total Tools',D.tools.length,'#2563eb','🛠','tools'],['Total Categories',D.cats.length,'#16a34a','▦','cats'],['Total Pages',D.pages.length,'#7c3aed','📄','pages']];
- return `<h2>Dashboard</h2><p class="sub">Sirf asli data. Pehle "Import from website" se apne tools aur pages le aayein.</p><div class="grid g4">${S.map(s=>`<div class="card stat" style="cursor:pointer" onclick="go('${s[4]}')"><div class="ic" style="background:${s[2]}">${s[3]}</div><div>${s[0]}<b>${s[1]}</b></div></div>`).join('')}</div><br>
-<div class="grid g2"><div class="card"><b>Quick Actions</b><br><br><div class="qa"><div onclick="go('tools');form('tools')">🛠 Add New Tool</div><div onclick="go('cats');form('cats')">▦ Add New Category</div><div onclick="go('pages');form('pages')">📄 Add New Page</div><div onclick="go('tools');imp()">⬇ Import from website</div><div onclick="go('ads')">💰 AdSense Settings</div><div onclick="go('set')">⚙ Website Settings</div></div></div>
-<div class="card"><b>Recent Activity</b><br><br>${D.activity.slice(0,6).map(a=>`<p style="margin-bottom:8px">${esc(a.m)} <small style="color:var(--mu)">· ${a.t}</small></p>`).join('')||'<small>Abhi koi activity nahi</small>'}</div></div>`}
-function fields(pre,arr){return arr.map(a=>field(a[0],a[1],a[2],D.set[a[0]])).join('')}
-function saveSet(){Object.assign(D.set,Object.fromEntries(new FormData($('#sf'))));log('Settings updated');save();alert('Saved ✔');render()}
-function setCard(t,arr){return `<h2>${t}</h2><br><div class="card"><form id="sf">${fields('',arr)}</form><br><button class="btn" onclick="saveSet()">Save</button></div>`}
-function ads(){return setCard('Ads & Monetization',[['adOn','AdSense enabled?','Yes,No'],['adClient','Publisher ID (ca-pub-XXXXXXXX)'],['adHead','AdSense head code (optional)','area'],['adSlot1','Ad unit slot 1 (header)'],['adSlot2','Ad unit slot 2 (sidebar/footer)']])}
-function set(){return setCard('Website Settings',[['name','Site name'],['url','Site URL'],['title','SEO meta title'],['desc','Meta description','area'],['keywords','Keywords'],['email','Contact email'],['whatsapp','WhatsApp'],['facebook','Facebook URL'],['twitter','Twitter/X URL'],['instagram','Instagram URL'],['ga','Google Analytics ID (G-XXXX)'],['billing','Billing module','Off,On']])}
-function an(){return `<h2>Analytics & Visitors</h2><p class="sub">Asli visitors Google Analytics ya Cloudflare se aate hain, yahan fake numbers nahi.</p><div class="card"><a class="btn" style="text-decoration:none;display:inline-block" target="_blank" href="https://analytics.google.com">Google Analytics</a> <a class="btn sec" style="text-decoration:none;display:inline-block" target="_blank" href="https://dash.cloudflare.com">Cloudflare Analytics</a></div>`}
-function users(){return `<h2>Users Management</h2><p class="sub">Abhi single admin hai. Password Website Settings mein badlein. Strong security ke liye Cloudflare Access (Zero Trust) se /admin.html ko protect karein.</p>`}
+ return `<h2>Dashboard</h2><p class="sub">Aapka asli data, seedha server se.</p><div class="grid g4">${S.map(s=>`<div class="card stat" style="cursor:pointer" onclick="go('${s[4]}')"><div class="ic" style="background:${s[2]}">${s[3]}</div><div>${s[0]}<b>${s[1]}</b></div></div>`).join('')}</div><br><div class="card"><b>Quick Actions</b><br><br><div class="qa"><div onclick="go('tools');form('tools')">🛠 Add New Tool</div><div onclick="go('cats');form('cats')">▦ Add New Category</div><div onclick="go('pages');form('pages')">📄 Add New Page</div><div onclick="go('tools');imp()">⬇ Import from website</div><div onclick="go('ads')">💰 AdSense Settings</div><div onclick="go('set')">⚙ Website Settings</div></div></div>`}
+let cb=null;
+function formCard(t,arr,vals,fn){cb=fn;return `<h2>${t}</h2><br><div class="card"><form id="sf">${arr.map(a=>field(a[0],a[1],a[2],vals[a[0]])).join('')}</form><br><button class="btn" onclick="cb(Object.fromEntries(new FormData($('#sf'))))">Save</button></div>`}
+function ads(){const a=D.ads||{};return formCard('Ads & Monetization',[['enabled','AdSense enabled?','Yes,No'],['clientId','Publisher ID (ca-pub-XXXXXXXX)'],['slot1','Ad unit slot 1 (header)'],['slot2','Ad unit slot 2 (sidebar/footer)']],{enabled:a.enabled?'Yes':'No',clientId:a.clientId,slot1:(a.slots||[])[0],slot2:(a.slots||[])[1]},async f=>{D.ads={enabled:f.enabled=='Yes',clientId:f.clientId,slots:[f.slot1,f.slot2].filter(Boolean)};await persist('ads')})}
+function set(){return formCard('Website Settings',[['siteName','Site name'],['siteUrl','Site URL'],['metaTitle','SEO meta title'],['metaDesc','Meta description','area'],['keywords','Keywords'],['contactEmail','Contact email'],['whatsapp','WhatsApp'],['facebook','Facebook URL'],['twitter','Twitter/X URL'],['instagram','Instagram URL'],['ga','Google Analytics ID (G-XXXX)'],['billing','Billing module','Off,On']],D.settings,async f=>{Object.assign(D.settings,f);await persist('settings');render()})}
+function an(){return `<h2>Analytics & Visitors</h2><p class="sub">Asli visitors Google Analytics ya Cloudflare se aate hain.</p><div class="card"><a class="btn" style="text-decoration:none;display:inline-block" target="_blank" href="https://analytics.google.com">Google Analytics</a> <a class="btn sec" style="text-decoration:none;display:inline-block" target="_blank" href="https://dash.cloudflare.com">Cloudflare Analytics</a></div>`}
+function users(){return `<h2>Users Management</h2><p class="sub">Single admin. Password Cloudflare mein ADMIN_PASSWORD secret se chalta hai.</p>`}
 function bill(){return `<h2>Billing</h2><p class="sub">Module ON hai, lekin abhi placeholder.</p>`}
-function exportJ(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));a.download='site-data.json';a.click()}
-async function publish(){try{const {gh,...pub}=D;const p=await fetch('/api/publish',{method:'POST',headers:{Authorization:'Bearer '+sessionStorage.tok},body:JSON.stringify(pub,null,2)});
- if(p.status==401){sessionStorage.clear();return location.reload()}alert(p.ok?'Published ✔ Cloudflare 1-2 minute mein live karega.':'Error: '+await p.text())}catch(e){alert(e)}}
-async function imp(){$('#mc').innerHTML=`<h3>Import from website</h3><p class="sub">Apni website ke page/tool URLs (har line mein ek) likhein. Sitemap mile to khud aa jayenge.</p><textarea id="iu" placeholder="/about.html&#10;/tools/pdf-merge.html"></textarea><br><br><button class="btn" onclick="runImp()">Import</button> <button class="btn sec" onclick="modal.style.display='none'">Cancel</button><p id="is" class="sub"></p>`;modal.style.display='grid';
+async function imp(){$('#mc').innerHTML=`<h3>Import from website</h3><p class="sub">Page/tool URLs (har line mein ek). Sitemap mile to khud aa jayenge.</p><textarea id="iu"></textarea><br><br><button class="btn" onclick="runImp()">Import</button> <button class="btn sec" onclick="modal.style.display='none'">Cancel</button><p id="is" class="sub"></p>`;modal.style.display='grid';
  try{const x=await (await fetch('/sitemap.xml')).text();$('#iu').value=[...x.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>new URL(m[1].trim()).pathname).join('\n')}catch(e){}}
 async function runImp(){const L=$('#iu').value.split('\n').map(x=>x.trim()).filter(Boolean);let n=0;
  for(const l of L){const p=l.startsWith('http')?new URL(l).pathname:l;if(D.tools.concat(D.pages).some(x=>x.url==p))continue;$('#is').textContent='Reading '+p;
   let t=p,d='';try{const h=await (await fetch(p)).text();t=((h.match(/<title>([^<]*)/i)||[,p])[1]).split(/[|\-–]/)[0].trim();d=(h.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)/i)||[,''])[1]}catch(e){}
   if(/tool/i.test(p))D.tools.push({id:Date.now()+n,name:t,cat:'',url:p,desc:d,status:'Active'});else D.pages.push({id:Date.now()+n,title:t,url:p,content:'',footer:'No',status:'Published'});n++}
- log('Imported '+n+' items');save();modal.style.display='none';render();alert(n+' items import hue. Ab har tool ki category set karein.')}
-load();render();
+ modal.style.display='none';render();await persist('tools');await persist('pages');alert(n+' items import hue. Ab har tool ki category set karein.')}
+if(sessionStorage.tok&&API)start();
 </script></body></html>
